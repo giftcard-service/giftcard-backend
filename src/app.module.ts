@@ -13,6 +13,7 @@ import { User } from './users/user.entity';
 import { UsersController } from './users/users.controller';
 import { UsersModule } from './users/users.module';
 import { UsersService } from './users/users.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { UsersService } from './users/users.service';
     }),
     UsersModule,
     StoresModule,
+    AuthModule,
   ],
   controllers: [AppController, CatsController, UsersController],
   providers: [AppService],

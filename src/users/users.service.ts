@@ -21,18 +21,32 @@ export class UsersService {
     return this.usersRepository.findOne(id);
   }
 
-  findById(id: number): Promise<User> {
+  findOneById(id: number): Promise<User> {
     return this.usersRepository.findOne(id);
   }
 
-  async create(store: CreateUserDto): Promise<void> {
-    await this.usersRepository.save(store);
+  findOneByUsername(username: string): Promise<User> {
+    return this.usersRepository.findOne({ where: { username: username } });
   }
 
-  async update(id: string, store: UpdateUserDto): Promise<void> {
+  async create(userData: CreateUserDto): Promise<User> {
+    const { username, password } = userData;
+
+    const user = new User();
+    user.username = username;
+    user.password = password;
+
+    await this.usersRepository.save(user);
+    user.password = undefined;
+    console.log(user);
+
+    return user;
+  }
+
+  async update(id: string, userData: UpdateUserDto): Promise<void> {
     const userNew = await this.usersRepository.findOne(id);
-    userNew.username = store.username;
-    userNew.password = store.password;
+    userNew.username = userData.username;
+    userNew.password = userData.password;
     await this.usersRepository.save(userNew);
   }
 
