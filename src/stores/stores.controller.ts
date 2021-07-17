@@ -7,7 +7,9 @@ import {
   Param,
   Delete,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 import { StoresService } from './stores.service';
 import { CreateStoreDto } from './dto/create-store.dto';
@@ -15,6 +17,7 @@ import { UpdateStoreDto } from './dto/update-store.dto';
 import { Store } from './store.entity';
 
 @Controller('stores')
+@UseGuards(AuthGuard('jwt'))
 export class StoresController {
   constructor(private readonly storesService: StoresService) {}
 
