@@ -33,7 +33,7 @@ export class User {
   @IsDefined()
   isManager?: boolean;
 
-  @ManyToOne(() => Store)
+  @ManyToOne(() => Store, (store: Store) => store.users, { eager: true })
   @JoinColumn()
   store?: Store;
 }

@@ -1,5 +1,12 @@
 import { IsDefined } from 'class-validator';
-import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Unique,
+  OneToMany,
+} from 'typeorm';
+import { User } from '../users/user.entity';
 
 @Entity()
 @Unique(['name'])
@@ -11,4 +18,7 @@ export class Store {
   @Column({ unique: true })
   @IsDefined()
   name: string;
+
+  @OneToMany(() => User, (user: User) => user.store)
+  users: User[];
 }
