@@ -36,6 +36,14 @@ export class UsersService {
   async create(userData: CreateUserDto): Promise<User> {
     const { username, password } = userData;
 
+    if (!(username.length > 4 && username.length < 21)) {
+      throw new BadRequestException('Username must be 5 to 20 long.');
+    }
+
+    if (!(password.length > 7 && username.length < 17)) {
+      throw new BadRequestException('Password must be 8 to 16 long.');
+    }
+
     const user = new User();
     user.username = username;
     user.password = password;
