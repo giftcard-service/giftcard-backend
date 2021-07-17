@@ -14,7 +14,8 @@
     "types": [
       "jest",
       "node"
-    ]
+    ],
+    "skipLibCheck": true
   },
   "exclude": [
     "node_modules",
