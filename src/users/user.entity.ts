@@ -1,3 +1,4 @@
+import { IsDefined } from 'class-validator';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -13,18 +14,23 @@ import { Store } from '../stores/store.entity';
 @Unique(['username'])
 export class User {
   @PrimaryGeneratedColumn('uuid')
+  @IsDefined()
   id: string;
 
   @Column({ unique: true })
+  @IsDefined()
   username: string;
 
   @Column()
+  @IsDefined()
   password: string;
 
   @Column({ default: true })
+  @IsDefined()
   isActive?: boolean;
 
   @Column({ default: false })
+  @IsDefined()
   isManager?: boolean;
 
   @ManyToOne(() => Store)
