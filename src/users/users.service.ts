@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -36,10 +36,16 @@ export class UsersService {
     user.username = username;
     user.password = password;
 
-    await this.usersRepository.save(user);
-    user.password = undefined;
-    console.log(user);
+    await this.usersRepository.save(user).catch((e) => {
+      if (/(username)[\s\S]+(already exists)/.test(e.detail)) {
+        throw new BadRequestException(
+          'User with this username already exists.',
+        );
+      }
+      return e;
+    });
 
+    user.password = undefined;
     return user;
   }
 

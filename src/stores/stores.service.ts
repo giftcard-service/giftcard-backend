@@ -25,13 +25,19 @@ export class StoresService {
     return this.storesRepository.findOne(id);
   }
 
-  async create(store: CreateStoreDto): Promise<void> {
+  async create(storeData: CreateStoreDto): Promise<Store> {
+    const { name } = storeData;
+
+    const store = new Store();
+    store.name = name;
+
     await this.storesRepository.save(store);
+    return store;
   }
 
-  async update(id: string, store: UpdateStoreDto): Promise<void> {
+  async update(id: string, storeData: UpdateStoreDto): Promise<void> {
     const storeNew = await this.storesRepository.findOne(id);
-    storeNew.name = store.name;
+    storeNew.name = storeData.name;
     await this.storesRepository.save(storeNew);
   }
 
