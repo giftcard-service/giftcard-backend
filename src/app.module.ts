@@ -9,6 +9,7 @@ import { StoresModule } from './stores/stores.module';
 import { UsersController } from './users/users.controller';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { GiftcardsModule } from './giftcards/giftcards.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { AuthModule } from './auth/auth.module';
     UsersModule,
     StoresModule,
     AuthModule,
+    GiftcardsModule,
   ],
   controllers: [AppController, UsersController],
   providers: [AppService],

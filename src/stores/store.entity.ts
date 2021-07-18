@@ -6,6 +6,8 @@ import {
   Unique,
   OneToMany,
 } from 'typeorm';
+
+import { Giftcard } from '../giftcards/giftcard.entity';
 import { User } from '../users/user.entity';
 
 @Entity()
@@ -21,4 +23,7 @@ export class Store {
 
   @OneToMany(() => User, (user: User) => user.store)
   users: User[];
+
+  @OneToMany(() => Giftcard, (giftcard: Giftcard) => giftcard.store)
+  giftcards: Giftcard[];
 }

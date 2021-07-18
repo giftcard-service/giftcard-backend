@@ -6,8 +6,10 @@ import {
   Unique,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 
+import { Giftcard } from '../giftcards/giftcard.entity';
 import { Store } from '../stores/store.entity';
 
 @Entity()
@@ -36,4 +38,7 @@ export class User {
   @ManyToOne(() => Store, (store: Store) => store.users, { eager: true })
   @JoinColumn()
   store?: Store;
+
+  @OneToMany(() => Giftcard, (giftcard: Giftcard) => giftcard.owner)
+  giftcards: Giftcard[];
 }
