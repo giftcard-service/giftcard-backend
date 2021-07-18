@@ -76,4 +76,10 @@ export class UsersService {
   async remove(id: string): Promise<void> {
     await this.usersRepository.delete(id);
   }
+
+  async setStore(id: string, store: Store): Promise<void> {
+    const user = await this.usersRepository.findOne(id);
+    user.store = store;
+    await this.usersRepository.save(user);
+  }
 }
