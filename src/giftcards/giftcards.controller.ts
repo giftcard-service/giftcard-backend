@@ -1,15 +1,19 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
+import { Pagination } from 'nestjs-typeorm-paginate';
+
 import { CreateGiftcardDto } from './dto/create-giftcard.dto';
 import { UpdateGiftcardDto } from './dto/update-giftcard.dto';
-
 import { Giftcard } from './giftcard.entity';
 import { GiftcardsService } from './giftcards.service';
 
@@ -18,8 +22,16 @@ export class GiftcardsController {
   constructor(private readonly giftcardsService: GiftcardsService) {}
 
   @Get()
-  findAll(): Promise<Giftcard[]> {
-    return this.giftcardsService.findAll();
+  async findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+  ): Promise<Pagination<Giftcard>> {
+    limit = limit > 100 ? 100 : limit;
+    return this.giftcardsService.paginate({
+      page,
+      limit,
+      route: '/v1/giftcards',
+    });
   }
 
   @Get(':id')

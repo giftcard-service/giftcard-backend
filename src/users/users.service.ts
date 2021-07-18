@@ -1,5 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import {
+  paginate,
+  Pagination,
+  IPaginationOptions,
+} from 'nestjs-typeorm-paginate';
 
 import { Repository } from 'typeorm';
 import { Store } from '../stores/store.entity';
@@ -16,6 +21,10 @@ export class UsersService {
     @InjectRepository(Store)
     private storesRepository: Repository<Store>,
   ) {}
+
+  async paginate(options: IPaginationOptions): Promise<Pagination<User>> {
+    return paginate<User>(this.usersRepository, options);
+  }
 
   findAll(): Promise<User[]> {
     return this.usersRepository.find();

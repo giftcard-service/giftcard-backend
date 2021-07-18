@@ -8,8 +8,12 @@ import {
   Delete,
   BadRequestException,
   UseGuards,
+  ParseIntPipe,
+  DefaultValuePipe,
+  Query,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Pagination } from 'nestjs-typeorm-paginate';
 
 import { StoresService } from './stores.service';
 import { CreateStoreDto } from './dto/create-store.dto';
@@ -21,6 +25,24 @@ import { Store } from './store.entity';
 export class StoresController {
   constructor(private readonly storesService: StoresService) {}
 
+  @Get()
+  async findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+  ): Promise<Pagination<Store>> {
+    limit = limit > 100 ? 100 : limit;
+    return this.storesService.paginate({
+      page,
+      limit,
+      route: '/v1/stores',
+    });
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.storesService.findOne(id);
+  }
+
   @Post()
   create(@Body() createStoreDto: CreateStoreDto): Promise<Store> {
     return this.storesService.create(createStoreDto).catch((e) => {
@@ -29,16 +51,6 @@ export class StoresController {
       }
       return e;
     });
-  }
-
-  @Get()
-  findAll() {
-    return this.storesService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.storesService.findOne(id);
   }
 
   @Patch(':id')

@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Store } from '../stores/store.entity';
+import {
+  paginate,
+  Pagination,
+  IPaginationOptions,
+} from 'nestjs-typeorm-paginate';
 
+import { Store } from '../stores/store.entity';
 import { User } from '../users/user.entity';
 import { CreateGiftcardDto } from './dto/create-giftcard.dto';
 import { UpdateGiftcardDto } from './dto/update-giftcard.dto';
@@ -18,6 +23,10 @@ export class GiftcardsService {
     @InjectRepository(Store)
     private storesRepository: Repository<Store>,
   ) {}
+
+  async paginate(options: IPaginationOptions): Promise<Pagination<Giftcard>> {
+    return paginate<Giftcard>(this.giftcardsRepository, options);
+  }
 
   findAll(): Promise<Giftcard[]> {
     return this.giftcardsRepository.find();
