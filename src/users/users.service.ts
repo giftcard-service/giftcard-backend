@@ -62,15 +62,17 @@ export class UsersService {
   }
 
   async update(id: string, userData: UpdateUserDto): Promise<void> {
-    const userNew = await this.usersRepository.findOne(id);
-    const store = await this.storesRepository.findOne(userData.storeId);
+    const { username, password, storeId } = userData;
 
-    userNew.username = userData.username;
-    userNew.password = userData.password;
+    const user = await this.usersRepository.findOne(id);
+    user.username = username;
+    user.password = password;
+
+    const store = await this.storesRepository.findOne(userData.storeId);
     if (store) {
-      userNew.store = store;
+      user.store = store;
     }
-    await this.usersRepository.save(userNew);
+    await this.usersRepository.save(user);
   }
 
   async remove(id: string): Promise<void> {
