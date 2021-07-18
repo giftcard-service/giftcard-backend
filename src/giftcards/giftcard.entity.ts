@@ -21,7 +21,7 @@ export class Giftcard {
 
   @ManyToOne(() => User, (user: User) => user.giftcards, { eager: true })
   @JoinColumn()
-  owner?: User;
+  owner!: User;
 
   @ManyToOne(() => Store, (store: Store) => store.giftcards, { eager: true })
   @JoinColumn()

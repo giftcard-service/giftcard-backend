@@ -3,7 +3,4 @@ import { IsString } from 'class-validator';
 
 import { CreateGiftcardDto } from './create-giftcard.dto';
 
-export class UpdateGiftcardDto extends PartialType(CreateGiftcardDto) {
-  @IsString()
-  ownerId: string;
-}
+export class UpdateGiftcardDto extends PartialType(CreateGiftcardDto) {}

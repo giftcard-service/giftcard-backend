@@ -1,10 +1,11 @@
 import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
 
-import { Store } from '../../stores/store.entity';
-
 export class CreateGiftcardDto {
   @IsString()
-  storeId: Store;
+  ownerId!: string;
+
+  @IsString()
+  storeId!: string;
 
   @IsNumber()
   amount!: number;

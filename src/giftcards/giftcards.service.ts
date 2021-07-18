@@ -32,23 +32,28 @@ export class GiftcardsService {
   }
 
   async create(giftcardData: CreateGiftcardDto): Promise<Giftcard> {
-    const { storeId, creationTime, expirationTime, amount, isUsed } =
+    const { ownerId, storeId, creationTime, expirationTime, amount, isUsed } =
       giftcardData;
 
     const giftcard = new Giftcard();
+    giftcard.owner = await this.usersRepository.findOne(ownerId);
     giftcard.store = await this.storesRepository.findOne(storeId);
     giftcard.creationTime = creationTime;
     giftcard.expirationTime = expirationTime;
     giftcard.amount = amount;
-    giftcard.isUsed = isUsed;
+    giftcard.isUsed = isUsed || false;
 
     await this.giftcardsRepository.save(giftcard);
     return giftcard;
   }
 
   async update(id: string, giftcardData: UpdateGiftcardDto): Promise<void> {
+    const { ownerId, expirationTime, isUsed } = giftcardData;
+
     const giftcard = await this.giftcardsRepository.findOne(id);
-    giftcard.owner = await this.usersRepository.findOne(giftcardData.ownerId);
+    giftcard.owner = await this.usersRepository.findOne(ownerId);
+    giftcard.expirationTime = expirationTime;
+    giftcard.isUsed = isUsed;
     await this.giftcardsRepository.save(giftcard);
   }
 
