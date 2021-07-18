@@ -25,13 +25,32 @@ export class UsersController {
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+    @Query('user-id') userId?,
+    @Query('username') username?,
+    @Query('store-id') storeId?,
+    @Query('store-name') storeName?,
+    @Query('store-exists') storeExists?,
+    @Query('is-manager') isManager?,
+    @Query('is-active') isActive?,
   ): Promise<Pagination<User>> {
     limit = limit > 100 ? 100 : limit;
-    return this.usersService.paginate({
+    const options = {
       page,
       limit,
       route: '/v1/users',
-    });
+    };
+
+    const searchOptions = {
+      userId,
+      username,
+      storeId,
+      storeName,
+      storeExists,
+      isManager,
+      isActive,
+    };
+
+    return this.usersService.paginate(options, searchOptions);
   }
 
   @Get(':id')

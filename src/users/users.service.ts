@@ -22,8 +22,59 @@ export class UsersService {
     private storesRepository: Repository<Store>,
   ) {}
 
-  async paginate(options: IPaginationOptions): Promise<Pagination<User>> {
-    return paginate<User>(this.usersRepository, options);
+  async paginate(
+    options: IPaginationOptions,
+    searchOptions,
+  ): Promise<Pagination<User>> {
+    const {
+      userId,
+      username,
+      storeId,
+      storeName,
+      storeExists,
+      isManager,
+      isActive,
+    } = searchOptions;
+
+    const queryBuilder = this.usersRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.store', 'store');
+
+    isActive !== undefined &&
+      queryBuilder.andWhere('user.isActive = :isActive', { isActive });
+    isManager !== undefined &&
+      queryBuilder.andWhere('user.isManager = :isManager', { isManager });
+    userId && queryBuilder.andWhere('user.id = :userId', { userId });
+    username &&
+      queryBuilder.andWhere('user.username = :username', { username });
+    storeName && queryBuilder.andWhere('store.id = :storeId', { storeId });
+    storeName &&
+      queryBuilder.andWhere('store.name = :storeName', { storeName });
+
+    storeExists !== undefined &&
+      storeExists === 'true' &&
+      queryBuilder.andWhere('store IS NOT NULL');
+    storeExists !== undefined &&
+      storeExists === 'false' &&
+      queryBuilder.andWhere('store IS NULL');
+
+    const results = await paginate(queryBuilder, options);
+    return new Pagination(
+      await Promise.all(
+        results.items.map(async (item: User) => {
+          const store = await this.storesRepository.findOne({
+            join: { alias: 'store', innerJoin: { users: 'store.users' } },
+            where: (qb) => {
+              qb.where('users.id = :userId', { userId: item.id });
+            },
+          });
+          item.store = store || null;
+          return item;
+        }),
+      ),
+      results.meta,
+      results.links,
+    );
   }
 
   findAll(): Promise<User[]> {
