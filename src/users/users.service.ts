@@ -125,13 +125,24 @@ export class UsersService {
     const { username, password, storeId } = userData;
 
     const user = await this.usersRepository.findOne(id);
-    user.username = username;
-    user.password = password;
-
-    const store = await this.storesRepository.findOne(userData.storeId);
-    if (store) {
-      user.store = store;
+    if (username !== undefined) {
+      user.username = username;
     }
+    if (password !== undefined) {
+      user.password = password;
+    }
+
+    if (storeId !== undefined) {
+      if (storeId !== null) {
+        const store = await this.storesRepository.findOne(userData.storeId);
+        if (store) {
+          user.store = store;
+        }
+      } else {
+        user.store = null;
+      }
+    }
+
     await this.usersRepository.save(user);
   }
 
