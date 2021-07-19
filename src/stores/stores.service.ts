@@ -7,6 +7,7 @@ import {
 } from 'nestjs-typeorm-paginate';
 
 import { Repository } from 'typeorm';
+import { User } from '../users/user.entity';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { Store } from './store.entity';
@@ -16,10 +17,24 @@ export class StoresService {
   constructor(
     @InjectRepository(Store)
     private storesRepository: Repository<Store>,
+
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
   ) {}
 
-  async paginate(options: IPaginationOptions): Promise<Pagination<Store>> {
-    return paginate<Store>(this.storesRepository, options);
+  async paginate(
+    options: IPaginationOptions,
+    searchOptions,
+  ): Promise<Pagination<Store>> {
+    const { storeId, storeName } = searchOptions;
+
+    const queryBuilder = this.storesRepository.createQueryBuilder('store');
+
+    storeId && queryBuilder.andWhere('store.id = :storeId', { storeId });
+    storeName &&
+      queryBuilder.andWhere('store.name = :storeName', { storeName });
+
+    return await paginate(queryBuilder, options);
   }
 
   findAll(): Promise<Store[]> {

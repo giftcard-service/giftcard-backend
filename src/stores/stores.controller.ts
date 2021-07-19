@@ -29,13 +29,21 @@ export class StoresController {
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+    @Query('store-id') storeId?,
+    @Query('store-name') storeName?,
   ): Promise<Pagination<Store>> {
     limit = limit > 100 ? 100 : limit;
-    return this.storesService.paginate({
+    const options = {
       page,
       limit,
       route: '/v1/stores',
-    });
+    };
+    const searchOptions = {
+      storeId,
+      storeName,
+    };
+
+    return this.storesService.paginate(options, searchOptions);
   }
 
   @Get(':id')
