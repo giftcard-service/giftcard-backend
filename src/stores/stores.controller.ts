@@ -29,8 +29,8 @@ export class StoresController {
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
-    @Query('store-id') storeId?,
-    @Query('store-name') storeName?,
+    @Query('id') storeId?,
+    @Query('name') storeName?,
   ): Promise<Pagination<Store>> {
     limit = limit > 100 ? 100 : limit;
     const options = {
