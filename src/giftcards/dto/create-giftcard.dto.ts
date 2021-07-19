@@ -1,4 +1,10 @@
-import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsDateString,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateGiftcardDto {
   @IsString()
@@ -10,12 +16,13 @@ export class CreateGiftcardDto {
   @IsNumber()
   amount!: number;
 
-  @IsDate()
+  @IsDateString()
   creationTime?: Date;
 
-  @IsDate()
+  @IsDateString()
   expirationTime!: Date;
 
   @IsBoolean()
+  @IsOptional()
   isUsed?: boolean;
 }

@@ -50,7 +50,10 @@ export class GiftcardsService {
     giftcard.creationTime = creationTime;
     giftcard.expirationTime = expirationTime;
     giftcard.amount = amount;
-    giftcard.isUsed = isUsed || false;
+
+    if (isUsed !== undefined) {
+      giftcard.isUsed = isUsed || false;
+    }
 
     await this.giftcardsRepository.save(giftcard);
     return giftcard;
