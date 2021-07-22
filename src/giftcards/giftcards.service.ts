@@ -31,7 +31,14 @@ export class GiftcardsService {
     options: IPaginationOptions,
     searchOptions,
   ): Promise<Pagination<Giftcard>> {
-    const { userId, username, storeId, storeName } = searchOptions;
+    const {
+      userId,
+      username,
+      storeId,
+      storeName,
+      expirationStart,
+      expirationEnd,
+    } = searchOptions;
 
     const queryBuilder = this.giftcardsRepository
       .createQueryBuilder('giftcard')
@@ -44,6 +51,14 @@ export class GiftcardsService {
     storeId && queryBuilder.andWhere('store.id = :storeId', { storeId });
     storeName &&
       queryBuilder.andWhere('store.name = :storeName', { storeName });
+    expirationStart &&
+      queryBuilder.andWhere('giftcard.expirationTime => :expirationStart', {
+        expirationStart,
+      });
+    expirationEnd &&
+      queryBuilder.andWhere('giftcard.expirationTime <= :expirationEnd', {
+        expirationEnd,
+      });
 
     const results = await paginate(queryBuilder, options);
     return new Pagination(

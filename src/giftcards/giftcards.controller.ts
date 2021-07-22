@@ -29,6 +29,8 @@ export class GiftcardsController {
     @Query('username') username?,
     @Query('store-id') storeId?,
     @Query('store-name') storeName?,
+    @Query('exp-start') expirationStart?,
+    @Query('exp-end') expirationEnd?,
   ): Promise<Pagination<Giftcard>> {
     limit = limit > 100 ? 100 : limit;
     const options = {
@@ -42,6 +44,8 @@ export class GiftcardsController {
       username,
       storeId,
       storeName,
+      expirationStart,
+      expirationEnd,
     };
 
     return this.giftcardsService.paginate(options, searchOptions);
