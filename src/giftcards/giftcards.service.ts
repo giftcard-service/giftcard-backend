@@ -41,7 +41,7 @@ export class GiftcardsService {
     userId && queryBuilder.andWhere('owner.id = :userId', { userId });
     username &&
       queryBuilder.andWhere('owner.username = :username', { username });
-    storeName && queryBuilder.andWhere('store.id = :storeId', { storeId });
+    storeId && queryBuilder.andWhere('store.id = :storeId', { storeId });
     storeName &&
       queryBuilder.andWhere('store.name = :storeName', { storeName });
 
@@ -70,7 +70,9 @@ export class GiftcardsService {
       giftcardData;
 
     const giftcard = new Giftcard();
-    giftcard.owner = await this.usersRepository.findOne(ownerId);
+    if (giftcard.owner) {
+      giftcard.owner = await this.usersRepository.findOne(ownerId);
+    }
     giftcard.store = await this.storesRepository.findOne(storeId);
     giftcard.creationTime = creationTime;
     giftcard.expirationTime = expirationTime;

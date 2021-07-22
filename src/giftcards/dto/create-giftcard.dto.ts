@@ -8,6 +8,7 @@ import {
 
 export class CreateGiftcardDto {
   @IsString()
+  @IsOptional()
   ownerId!: string;
 
   @IsString()
