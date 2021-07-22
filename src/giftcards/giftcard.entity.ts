@@ -10,6 +10,7 @@ import {
   AfterUpdate,
   OneToOne,
   OneToMany,
+  getRepository,
 } from 'typeorm';
 
 import { User } from '../users/user.entity';
@@ -61,9 +62,19 @@ export class Giftcard {
   @AfterLoad()
   @AfterInsert()
   @AfterUpdate()
-  çalculateAmountLeft(): void {
-    // TODO: calculate amount left properly
-    this.amountLeft = this.amount;
+  async calculateAmountLeft(): Promise<void> {
+    const { sum } = await getRepository(GiftcardPurchase)
+      .createQueryBuilder('giftcardPurchase')
+      .leftJoinAndSelect('giftcardPurchase.giftcard', 'giftcard')
+      .select('SUM(giftcardPurchase.amount)', 'sum')
+      .where('giftcard.id = :giftcardId', { giftcardId: this.id })
+      .getRawOne();
+
+    this.amountLeft = this.amount - sum;
+  }
+
+  async getAmountLeft(): Promise<number> {
+    return this.amountLeft;
   }
 
   @Column({ default: false })

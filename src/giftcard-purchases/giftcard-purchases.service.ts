@@ -57,10 +57,21 @@ export class GiftcardPurchasesService {
     const { userId, storeId, giftcardId, qrCodeId, amount } =
       giftcardPurchaseData;
 
+    if (amount <= 0) {
+      throw new BadRequestException('Amount must be greater than 0.');
+    }
+
     const qrCode = await this.qrCodesRepository.findOne(qrCodeId);
     const today = new Date();
 
-    if (today.getTime() >= qrCode.expirationTime.getTime()) {
+    const giftcard = await this.giftcardsRepository.findOne(giftcardId);
+    if (giftcard.expirationTime.getTime() <= today.getTime()) {
+      throw new BadRequestException('Giftcard given has been expired.');
+    }
+    if ((await giftcard.getAmountLeft()) - amount < 0) {
+      throw new BadRequestException('Not enough amount left in the giftcard.');
+    }
+    if (!qrCode || qrCode.expirationTime.getTime() <= today.getTime()) {
       throw new BadRequestException('QR code given has been expired.');
     }
 
@@ -73,6 +84,7 @@ export class GiftcardPurchasesService {
     giftcardPurchase.amount = amount;
 
     await this.giftcardPurchasesRepository.save(giftcardPurchase);
+    await giftcard.calculateAmountLeft();
     return giftcardPurchase;
   }
 
