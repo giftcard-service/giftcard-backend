@@ -27,13 +27,28 @@ export class GiftcardPurchasesController {
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+    @Query('user-id') userId?,
+    @Query('username') username?,
+    @Query('giftcard-id') giftcardId?,
+    @Query('store-id') storeId?,
+    @Query('store-name') storeName?,
   ): Promise<Pagination<GiftcardPurchase>> {
     limit = limit > 100 ? 100 : limit;
-    return this.giftcardPurchasesService.paginate({
+    const options = {
       page,
       limit,
       route: '/v1/giftcard-purchases',
-    });
+    };
+
+    const searchOptions = {
+      userId,
+      username,
+      giftcardId,
+      storeId,
+      storeName,
+    };
+
+    return this.giftcardPurchasesService.paginate(options, searchOptions);
   }
 
   @Get(':id')

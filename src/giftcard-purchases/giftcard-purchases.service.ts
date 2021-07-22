@@ -32,10 +32,30 @@ export class GiftcardPurchasesService {
 
   async paginate(
     options: IPaginationOptions,
+    searchOptions,
   ): Promise<Pagination<GiftcardPurchase>> {
-    return paginate<GiftcardPurchase>(
-      this.giftcardPurchasesRepository,
-      options,
+    const { userId, username, giftcardId, storeId, storeName } = searchOptions;
+
+    const queryBuilder = this.giftcardPurchasesRepository
+      .createQueryBuilder('giftcardPurchase')
+      .leftJoinAndSelect('giftcardPurchase.user', 'user')
+      .leftJoinAndSelect('giftcardPurchase.giftcard', 'giftcard')
+      .leftJoinAndSelect('giftcardPurchase.store', 'store');
+
+    userId && queryBuilder.andWhere('user.id = :userId', { userId });
+    username &&
+      queryBuilder.andWhere('user.username = :username', { username });
+    giftcardId &&
+      queryBuilder.andWhere('giftcard.id = :giftcardId', { giftcardId });
+    storeName && queryBuilder.andWhere('store.id = :storeId', { storeId });
+    storeName &&
+      queryBuilder.andWhere('store.name = :storeName', { storeName });
+
+    const results = await paginate(queryBuilder, options);
+    return new Pagination(
+      await Promise.all(results.items),
+      results.meta,
+      results.links,
     );
   }
 

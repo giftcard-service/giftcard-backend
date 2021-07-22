@@ -27,8 +27,30 @@ export class GiftcardsService {
     private qrCodesRepository: Repository<QrCode>,
   ) {}
 
-  async paginate(options: IPaginationOptions): Promise<Pagination<Giftcard>> {
-    return paginate<Giftcard>(this.giftcardsRepository, options);
+  async paginate(
+    options: IPaginationOptions,
+    searchOptions,
+  ): Promise<Pagination<Giftcard>> {
+    const { userId, username, storeId, storeName } = searchOptions;
+
+    const queryBuilder = this.giftcardsRepository
+      .createQueryBuilder('giftcard')
+      .leftJoinAndSelect('giftcard.owner', 'owner')
+      .leftJoinAndSelect('giftcard.store', 'store');
+
+    userId && queryBuilder.andWhere('owner.id = :userId', { userId });
+    username &&
+      queryBuilder.andWhere('owner.username = :username', { username });
+    storeName && queryBuilder.andWhere('store.id = :storeId', { storeId });
+    storeName &&
+      queryBuilder.andWhere('store.name = :storeName', { storeName });
+
+    const results = await paginate(queryBuilder, options);
+    return new Pagination(
+      await Promise.all(results.items),
+      results.meta,
+      results.links,
+    );
   }
 
   findAll(): Promise<Giftcard[]> {
