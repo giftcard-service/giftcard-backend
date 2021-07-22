@@ -17,9 +17,6 @@ export class StoresService {
   constructor(
     @InjectRepository(Store)
     private storesRepository: Repository<Store>,
-
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
   ) {}
 
   async paginate(

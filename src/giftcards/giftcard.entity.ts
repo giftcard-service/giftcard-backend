@@ -8,10 +8,12 @@ import {
   AfterLoad,
   AfterInsert,
   AfterUpdate,
+  OneToOne,
 } from 'typeorm';
 
 import { User } from '../users/user.entity';
 import { Store } from '../stores/store.entity';
+import { QrCode } from '../qrcodes/qrcode.entity';
 
 @Entity()
 export class Giftcard {
@@ -26,6 +28,12 @@ export class Giftcard {
   @ManyToOne(() => Store, (store: Store) => store.giftcards, { eager: true })
   @JoinColumn()
   store!: Store;
+
+  @OneToOne(() => QrCode, (qrCode: QrCode) => qrCode.giftcard, {
+    nullable: true,
+  })
+  @JoinColumn()
+  qrCode?: QrCode;
 
   @Column({ type: 'timestamptz' })
   @IsDefined()

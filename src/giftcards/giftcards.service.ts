@@ -12,6 +12,7 @@ import { User } from '../users/user.entity';
 import { CreateGiftcardDto } from './dto/create-giftcard.dto';
 import { UpdateGiftcardDto } from './dto/update-giftcard.dto';
 import { Giftcard } from './giftcard.entity';
+import { QrCode } from '../qrcodes/qrcode.entity';
 
 @Injectable()
 export class GiftcardsService {
@@ -22,6 +23,8 @@ export class GiftcardsService {
     private usersRepository: Repository<User>,
     @InjectRepository(Store)
     private storesRepository: Repository<Store>,
+    @InjectRepository(QrCode)
+    private qrCodesRepository: Repository<QrCode>,
   ) {}
 
   async paginate(options: IPaginationOptions): Promise<Pagination<Giftcard>> {
@@ -33,7 +36,7 @@ export class GiftcardsService {
   }
 
   findOne(id: string): Promise<Giftcard> {
-    return this.giftcardsRepository.findOne(id);
+    return this.giftcardsRepository.findOne({ where: { id } });
   }
 
   findById(id: string): Promise<Giftcard> {

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { QrCode } from '../qrcodes/qrcode.entity';
 
 import { Store } from '../stores/store.entity';
 import { StoresModule } from '../stores/stores.module';
@@ -11,7 +12,7 @@ import { GiftcardsService } from './giftcards.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Store, Giftcard]),
+    TypeOrmModule.forFeature([User, Store, Giftcard, QrCode]),
     UsersModule,
     StoresModule,
   ],
