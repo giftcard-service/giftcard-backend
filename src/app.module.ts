@@ -1,6 +1,6 @@
 import { join } from 'path';
 
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from './app.controller';
@@ -12,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
 import { GiftcardsModule } from './giftcards/giftcards.module';
 import { QrcodesModule } from './qrcodes/qrcodes.module';
 import { GiftcardPurchasesModule } from './giftcard-purchases/giftcard-purchases.module';
+import { AppLoggerMiddleware } from './app.logger';
 
 @Module({
   imports: [
@@ -35,4 +36,8 @@ import { GiftcardPurchasesModule } from './giftcard-purchases/giftcard-purchases
   controllers: [AppController, UsersController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(AppLoggerMiddleware).forRoutes('*');
+  }
+}
