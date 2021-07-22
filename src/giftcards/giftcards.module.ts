@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { QrCode } from '../qrcodes/qrcode.entity';
 
 import { Store } from '../stores/store.entity';
 import { StoresModule } from '../stores/stores.module';
@@ -9,10 +8,11 @@ import { UsersModule } from '../users/users.module';
 import { Giftcard } from './giftcard.entity';
 import { GiftcardsController } from './giftcards.controller';
 import { GiftcardsService } from './giftcards.service';
-
+import { GiftcardPurchase } from '../giftcard-purchases/giftcard-purchase.entity';
+import { QrCode } from '../qrcodes/qrcode.entity';
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Store, Giftcard, QrCode]),
+    TypeOrmModule.forFeature([User, Store, Giftcard, GiftcardPurchase, QrCode]),
     UsersModule,
     StoresModule,
   ],

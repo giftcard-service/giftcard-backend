@@ -9,11 +9,13 @@ import {
   AfterInsert,
   AfterUpdate,
   OneToOne,
+  OneToMany,
 } from 'typeorm';
 
 import { User } from '../users/user.entity';
 import { Store } from '../stores/store.entity';
 import { QrCode } from '../qrcodes/qrcode.entity';
+import { GiftcardPurchase } from '../giftcard-purchases/giftcard-purchase.entity';
 
 @Entity()
 export class Giftcard {
@@ -34,6 +36,12 @@ export class Giftcard {
   })
   @JoinColumn()
   qrCode?: QrCode;
+
+  @OneToMany(
+    () => GiftcardPurchase,
+    (giftcardPurchase: GiftcardPurchase) => giftcardPurchase.giftcard,
+  )
+  giftcardPurchases: GiftcardPurchase[];
 
   @Column({ type: 'timestamptz' })
   @IsDefined()

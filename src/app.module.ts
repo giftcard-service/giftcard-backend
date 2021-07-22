@@ -11,6 +11,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { GiftcardsModule } from './giftcards/giftcards.module';
 import { QrcodesModule } from './qrcodes/qrcodes.module';
+import { GiftcardPurchasesModule } from './giftcard-purchases/giftcard-purchases.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { QrcodesModule } from './qrcodes/qrcodes.module';
     AuthModule,
     GiftcardsModule,
     QrcodesModule,
+    GiftcardPurchasesModule,
   ],
   controllers: [AppController, UsersController],
   providers: [AppService],
