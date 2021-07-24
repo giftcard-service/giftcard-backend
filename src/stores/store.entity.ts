@@ -26,4 +26,8 @@ export class Store {
 
   @OneToMany(() => Giftcard, (giftcard: Giftcard) => giftcard.store)
   giftcards: Giftcard[];
+
+  sumIssuedGiftcardAmount?: number;
+  sumIssuedGiftcardAmountLeft?: number;
+  sumIssuedGiftcardWithNoOwnerAmount?: number;
 }

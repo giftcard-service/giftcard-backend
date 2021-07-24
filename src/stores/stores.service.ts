@@ -5,9 +5,8 @@ import {
   Pagination,
   IPaginationOptions,
 } from 'nestjs-typeorm-paginate';
-
 import { Repository } from 'typeorm';
-import { User } from '../users/user.entity';
+
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { Store } from './store.entity';
@@ -38,8 +37,39 @@ export class StoresService {
     return this.storesRepository.find();
   }
 
-  findOne(id: string): Promise<Store> {
-    return this.storesRepository.findOne(id);
+  async findOne(id: string): Promise<Store> {
+    const queryBuilder = this.storesRepository
+      .createQueryBuilder('store')
+      .leftJoin('store.giftcards', 'giftcards')
+      .leftJoin('giftcards.giftcardPurchases', 'giftcardPurchases')
+      .addSelect(
+        `SUM(CASE WHEN giftcards.owner.id IS NULL THEN giftcards.amount ELSE 0 END) `,
+        'sumIssuedGiftcardWithNoOwnerAmount',
+      )
+      .addSelect('SUM(giftcards.amount)', 'sumIssuedGiftcardAmount')
+      .addSelect(
+        'SUM(giftcards.amount) - SUM(giftcardPurchases.amount)',
+        'sumIssuedGiftcardAmountLeft',
+      )
+      .groupBy('store.id, giftcards.amount')
+      .where('store.id = :storeId', { storeId: id });
+    const raw_and_entities = await queryBuilder.getRawAndEntities();
+
+    for (const entity of raw_and_entities.entities) {
+      const raw = raw_and_entities.raw.find(
+        (raw) => raw.store_id === entity.id,
+      );
+      entity.sumIssuedGiftcardAmount = parseInt(raw.sumIssuedGiftcardAmount);
+      entity.sumIssuedGiftcardWithNoOwnerAmount = parseInt(
+        raw.sumIssuedGiftcardWithNoOwnerAmount,
+      );
+      entity.sumIssuedGiftcardAmountLeft = parseInt(
+        raw.sumIssuedGiftcardAmountLeft,
+      );
+    }
+
+    const store = raw_and_entities.entities[0];
+    return store;
   }
 
   findById(id: string): Promise<Store> {
