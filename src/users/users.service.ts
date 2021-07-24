@@ -5,6 +5,7 @@ import {
   Pagination,
   IPaginationOptions,
 } from 'nestjs-typeorm-paginate';
+import * as bcrypt from 'bcryptjs';
 
 import { Repository } from 'typeorm';
 import { Store } from '../stores/store.entity';
@@ -85,12 +86,16 @@ export class UsersService {
     return this.usersRepository.findOne(id);
   }
 
-  findOneById(id: number): Promise<User> {
+  findOneById(id: string): Promise<User> {
     return this.usersRepository.findOne(id);
   }
 
+  findOneByEmail(email: string): Promise<User> {
+    return this.usersRepository.findOne({ where: { email } });
+  }
+
   findOneByUsername(username: string): Promise<User> {
-    return this.usersRepository.findOne({ where: { username: username } });
+    return this.usersRepository.findOne({ where: { username } });
   }
 
   async create(userData: CreateUserDto): Promise<User> {
@@ -100,36 +105,49 @@ export class UsersService {
       throw new BadRequestException('Username must be 5 to 20 long.');
     }
 
-    if (!(password.length > 7 && username.length < 17)) {
+    if (!(password.length > 7 && password.length < 17)) {
       throw new BadRequestException('Password must be 8 to 16 long.');
     }
 
-    const user = new User();
-    user.username = username;
-    user.password = password;
-
-    await this.usersRepository.save(user).catch((e) => {
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = await this.usersRepository.create({
+        username,
+        password: hashedPassword,
+      });
+      await this.usersRepository.save(user);
+      user.password = undefined;
+      return user;
+    } catch (e) {
       if (/(username)[\s\S]+(already exists)/.test(e.detail)) {
         throw new BadRequestException(
           'User with this username already exists.',
         );
+      } else {
+        throw new BadRequestException('Creating user failed.');
       }
-      return e;
-    });
-
-    user.password = undefined;
-    return user;
+    }
   }
 
-  async update(id: string, userData: UpdateUserDto): Promise<void> {
+  async update(id: string, userData: UpdateUserDto): Promise<User> {
     const { username, password, storeId } = userData;
 
     const user = await this.usersRepository.findOne(id);
+
     if (username !== undefined) {
+      if (!(username.length > 4 && username.length < 21)) {
+        throw new BadRequestException('Username must be 5 to 20 long.');
+      }
+
       user.username = username;
     }
     if (password !== undefined) {
-      user.password = password;
+      if (!(password.length > 7 && password.length < 17)) {
+        throw new BadRequestException('Password must be 8 to 16 long.');
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user.password = hashedPassword;
     }
 
     if (storeId !== undefined) {
@@ -144,6 +162,8 @@ export class UsersService {
     }
 
     await this.usersRepository.save(user);
+    user.password = undefined;
+    return user;
   }
 
   async remove(id: string): Promise<void> {
