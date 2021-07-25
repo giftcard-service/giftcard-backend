@@ -20,7 +20,7 @@ export class QrCode {
     eager: true,
   })
   @JoinColumn()
-  giftcard?: Giftcard;
+  giftcard: Giftcard;
 
   @CreateDateColumn({ type: 'timestamptz' })
   @IsDefined()

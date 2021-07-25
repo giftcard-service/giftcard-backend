@@ -85,7 +85,7 @@ export class GiftcardsService {
       giftcardData;
 
     const giftcard = new Giftcard();
-    if (giftcard.owner) {
+    if (ownerId) {
       giftcard.owner = await this.usersRepository.findOne(ownerId);
     }
     giftcard.store = await this.storesRepository.findOne(storeId);
