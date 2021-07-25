@@ -13,6 +13,7 @@ import { GiftcardsModule } from './giftcards/giftcards.module';
 import { QrcodesModule } from './qrcodes/qrcodes.module';
 import { GiftcardPurchasesModule } from './giftcard-purchases/giftcard-purchases.module';
 import { AppLoggerMiddleware } from './app.logger';
+import { CaslModule } from './casl/casl.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { AppLoggerMiddleware } from './app.logger';
     GiftcardsModule,
     QrcodesModule,
     GiftcardPurchasesModule,
+    CaslModule,
   ],
   controllers: [AppController, UsersController],
   providers: [AppService],

@@ -19,6 +19,10 @@ import { StoresService } from './stores.service';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { Store } from './store.entity';
+import { CheckPolicies } from '../casl/utils';
+import { Action } from '../casl/constants';
+import { AppAbility } from '../casl/casl-ability.factory';
+import { PoliciesGuard } from '../casl/policies.guard';
 
 @Controller('stores')
 @UseGuards(AuthGuard('jwt'))
@@ -51,6 +55,8 @@ export class StoresController {
     return this.storesService.findOne(id);
   }
 
+  @UseGuards(AuthGuard('jwt'), PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Store))
   @Post()
   create(@Body() createStoreDto: CreateStoreDto): Promise<Store> {
     return this.storesService.create(createStoreDto).catch((e) => {
@@ -61,11 +67,15 @@ export class StoresController {
     });
   }
 
+  @UseGuards(AuthGuard('jwt'), PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Store))
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateStoreDto: UpdateStoreDto) {
     return this.storesService.update(id, updateStoreDto);
   }
 
+  @UseGuards(AuthGuard('jwt'), PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Delete, Store))
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.storesService.remove(id);

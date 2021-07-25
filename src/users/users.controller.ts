@@ -9,6 +9,7 @@ import {
   DefaultValuePipe,
   Query,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { Pagination } from 'nestjs-typeorm-paginate';
 
@@ -16,11 +17,18 @@ import { User } from './user.entity';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { AppAbility } from '../casl/casl-ability.factory';
+import { PoliciesGuard } from '../casl/policies.guard';
+import { Action } from '../casl/constants';
+import { CheckPolicies } from '../casl/utils';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @UseGuards(AuthGuard('jwt'), PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, User))
   @Get()
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
@@ -53,6 +61,8 @@ export class UsersController {
     return this.usersService.paginate(options, searchOptions);
   }
 
+  @UseGuards(AuthGuard('jwt'), PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, User))
   @Get(':id')
   findOne(@Param('id') id: string): Promise<User> {
     return this.usersService.findOne(id);
@@ -63,11 +73,15 @@ export class UsersController {
     return this.usersService.create(userData);
   }
 
+  @UseGuards(AuthGuard('jwt'), PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, User))
   @Patch(':id')
   update(@Param('id') id: string, @Body() userData: UpdateUserDto) {
     return this.usersService.update(id, userData);
   }
 
+  @UseGuards(AuthGuard('jwt'), PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Delete, User))
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);

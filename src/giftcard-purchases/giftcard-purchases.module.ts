@@ -8,10 +8,12 @@ import { GiftcardPurchasesService } from './giftcard-purchases.service';
 import { QrCode } from '../qrcodes/qrcode.entity';
 import { Store } from '../stores/store.entity';
 import { User } from '../users/user.entity';
+import { CaslModule } from '../casl/casl.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Giftcard, GiftcardPurchase, User, Store, QrCode]),
+    CaslModule,
   ],
   controllers: [GiftcardPurchasesController],
   providers: [GiftcardPurchasesService],
