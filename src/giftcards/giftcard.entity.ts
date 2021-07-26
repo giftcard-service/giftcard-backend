@@ -12,6 +12,7 @@ import {
   OneToMany,
   getRepository,
 } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 
 import { User } from '../users/user.entity';
 import { Store } from '../stores/store.entity';
@@ -22,6 +23,7 @@ import { GiftcardPurchase } from '../giftcard-purchases/giftcard-purchase.entity
 export class Giftcard {
   @PrimaryGeneratedColumn('uuid')
   @IsDefined()
+  @ApiProperty({ description: 'ID' })
   id: string;
 
   @ManyToOne(() => User, (user: User) => user.giftcards, {
@@ -29,16 +31,19 @@ export class Giftcard {
     nullable: true,
   })
   @JoinColumn()
+  @ApiProperty({ description: '사용자' })
   owner?: User;
 
   @ManyToOne(() => Store, (store: Store) => store.giftcards, { eager: true })
   @JoinColumn()
+  @ApiProperty({ description: '매장' })
   store!: Store;
 
   @OneToOne(() => QrCode, (qrCode: QrCode) => qrCode.giftcard, {
     nullable: true,
   })
   @JoinColumn()
+  @ApiProperty({ description: 'QR 코드' })
   qrCode?: QrCode;
 
   @OneToMany(
@@ -49,17 +54,21 @@ export class Giftcard {
 
   @Column({ type: 'timestamptz' })
   @IsDefined()
+  @ApiProperty({ description: '생성 시각' })
   creationTime!: Date;
 
   @Column({ type: 'timestamptz' })
+  @ApiProperty({ description: '만료 시각' })
   expirationTime?: Date;
 
   @Column()
   @IsNumber()
+  @ApiProperty({ description: '금액' })
   amount!: number;
 
   @IsNumber()
   @IsOptional()
+  @ApiProperty({ description: '잔여 금액' })
   protected amountLeft: number;
 
   @AfterLoad()
@@ -82,5 +91,6 @@ export class Giftcard {
 
   @Column({ default: false })
   @IsBoolean()
+  @ApiProperty({ description: '사용 여부' })
   isUsed: boolean;
 }
