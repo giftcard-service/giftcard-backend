@@ -31,7 +31,7 @@ export class QrCodesController {
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
-    @Query('giftcardId') giftcardId?,
+    @Query('giftcard-id') giftcardId?,
   ): Promise<Pagination<QrCode>> {
     limit = limit > 100 ? 100 : limit;
     const options = {
