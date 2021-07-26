@@ -52,7 +52,7 @@ export class GiftcardsService {
     storeName &&
       queryBuilder.andWhere('store.name = :storeName', { storeName });
     expirationStart &&
-      queryBuilder.andWhere('giftcard.expirationTime => :expirationStart', {
+      queryBuilder.andWhere('giftcard.expirationTime >= :expirationStart', {
         expirationStart,
       });
     expirationEnd &&
