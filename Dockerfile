@@ -26,6 +26,6 @@ RUN yarn install --only=production
 
 COPY . .
 
-COPY --from=development /backend/dist ./dist
+COPY --from=development /backend/build ./build
 
 CMD ["node", "build/main"]
