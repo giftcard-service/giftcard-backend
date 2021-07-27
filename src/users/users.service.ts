@@ -99,7 +99,7 @@ export class UsersService {
   }
 
   async create(userData: CreateUserDto): Promise<User> {
-    const { username, password } = userData;
+    const { username, password, isManager } = userData;
 
     if (!(username.length > 4 && username.length < 21)) {
       throw new BadRequestException('Username must be 5 to 20 long.');
@@ -115,6 +115,12 @@ export class UsersService {
         username,
         password: hashedPassword,
       });
+
+      /* WARN: Comment this block to disable admin creation via API  */
+      if (isManager !== undefined) {
+        user.isManager = isManager;
+      }
+
       await this.usersRepository.save(user);
       user.password = undefined;
       return user;
