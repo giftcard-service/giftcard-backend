@@ -1,31 +1,58 @@
-FROM node:12.19.0-alpine3.9 AS development
+FROM node:lts-alpine
 
-WORKDIR /backend
+ENV NODE_ENV=production
 
-COPY package*.json ./
+WORKDIR /server
 
-RUN yarn add glob rimraf
+# Install all packages
+COPY package.json yarn.lock ./
+RUN yarn install --production=false
 
-RUN yarn install --only=development
+# Transpile TypeScript into JavaScript
+COPY src src
+COPY tsconfig.json tsconfig.build.json nest-cli.json ./
+RUN yarn build
 
-COPY . .
+# Remove useless files
+RUN rm -rf node_modules src tsconfig.json tsconfig.build.json
 
-RUN yarn run build
+# Install only dependency packages 
+RUN yarn install
+
+EXPOSE $PORT
+
+ENTRYPOINT [ "yarn" ]
+
+CMD [ "start:prod" ]
+
+# FROM node:12.19.0-alpine3.9 AS development
+
+# WORKDIR /server
+
+# COPY package.json yarn.lock ./
+
+# RUN yarn add glob rimraf
+
+# RUN yarn install --only=development
+
+# COPY . .
+
+# RUN yarn build
 
 
-FROM node:12.19.0-alpine3.9 as production
+# FROM node:lts-alpine as production
 
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
+# ARG NODE_ENV=production
+# ENV NODE_ENV=${NODE_ENV}
 
-WORKDIR /backend
+# WORKDIR /server
 
-COPY package*.json ./
+# COPY package*.json ./
 
-RUN yarn install --only=production
+# RUN yarn install --only=production
 
-COPY . .
+# COPY . .
 
-COPY --from=development /backend/build ./build
+# COPY --from=development /backend/build ./build
 
-CMD ["node", "build/main"]
+# CMD ["node", "build/main"]
