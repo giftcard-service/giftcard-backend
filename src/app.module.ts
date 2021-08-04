@@ -18,12 +18,12 @@ import { CaslModule } from './casl/casl.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: (process.env.SQL_TYPE as any) || 'postgres',
-      host: process.env.SQL_HOST || 'localhost',
-      port: parseInt(process.env.SQL_PORT) || 5432,
-      username: process.env.SQL_USER || 'root',
-      password: process.env.SQL_PASSWORD || 'foobar',
-      database: process.env.SQL_DATABASE || 'db_giftcard',
+      type: (process.env.SQL_TYPE as any) ?? 'postgres',
+      host: process.env.SQL_HOST ?? 'localhost',
+      port: parseInt(process.env.SQL_PORT) ?? 5432,
+      username: process.env.SQL_USER ?? 'postgres',
+      password: process.env.SQL_PASSWORD ?? 'foobar',
+      database: process.env.SQL_DATABASE ?? process.env.SQL_USER ?? 'postgres',
       synchronize: process.env.DB_SYNCHRONIZE === 'true' || true,
       entities: [join(__dirname, '**', '*.entity.{ts,js}')],
     }),

@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  giftcard_server:
+    build: .
+    container_name: giftcard-server
+    env_file:
+      - .env
+    ports:
+      - $PORT:$PORT

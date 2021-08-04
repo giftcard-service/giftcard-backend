@@ -10,3 +10,5 @@ temp/
 
 # macOS
 .DS_STORE
+
+.env
