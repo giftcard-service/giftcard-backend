@@ -111,15 +111,15 @@ export class UsersService {
 
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
-      const user = await this.usersRepository.create({
+      const user = this.usersRepository.create({
         username,
         password: hashedPassword,
       });
 
       /* WARN: Comment this block to disable admin creation via API  */
-      if (isManager !== undefined) {
-        user.isManager = isManager;
-      }
+      // if (isManager !== undefined) {
+      //   user.isManager = isManager;
+      // }
 
       await this.usersRepository.save(user);
       user.password = undefined;
